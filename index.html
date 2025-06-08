@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบสำรวจความต้องการพัฒนาศักยภาพครู</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+        /* Custom styles for better radio buttons */
+        .likert-scale {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        @media (min-width: 640px) {
+            .likert-scale {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+        .likert-options {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding-top: 0.5rem;
+        }
+         @media (min-width: 640px) {
+            .likert-options {
+                justify-content: center;
+                gap: 1rem;
+                width: auto;
+                padding-top: 0;
+            }
+        }
+        .likert-options input[type="radio"] {
+            opacity: 0;
+            position: fixed;
+            width: 0;
+        }
+        .likert-options label {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 2px solid #D1D5DB;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-weight: 500;
+        }
+        .likert-options input[type="radio"]:checked + label {
+            background-color: #3B82F6;
+            border-color: #3B82F6;
+            color: white;
+            transform: scale(1.1);
+        }
+        .likert-options input[type="radio"]:focus + label {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        }
+        .form-section {
+            scroll-margin-top: 80px; /* Offset for sticky progress bar */
+        }
+        .error-message {
+            color: #EF4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        .input-error {
+            border-color: #EF4444 !important;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4);
+        }
+        .likert-scale.input-error {
+            background-color: #fef2f2;
+            border-radius: 8px;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 400px; /* Default height */
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                width: 70%; /* Adjust for larger screens */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+    <!-- Progress Bar -->
+    <div id="progressBarContainer" class="sticky top-0 z-50 bg-gray-200 dark:bg-gray-700 h-2.5 w-full">
+        <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+    </div>
+
+    <div id="surveyContainer" class="container mx-auto p-4 sm:p-6 md:p-8 max-w-4xl">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 md:p-12">
+            
+            <!-- Header -->
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400">แบบสำรวจความต้องการพัฒนาศักยภาพครู</h1>
+                <p class="mt-4 text-gray-600 dark:text-gray-300">
+                    ข้อมูลของท่านจะเป็นประโยชน์อย่างยิ่งในการวางแผนพัฒนาบุคลากรครูให้มีประสิทธิภาพสูงสุด
+                </p>
+                 <p class="mt-2 text-sm text-gray-500">กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย <span class="text-red-500">*</span></p>
+            </div>
+
+            <form id="surveyForm" novalidate>
+                <!-- Section 1: General Info -->
+                <div id="section1" class="form-section mb-12">
+                    <h2 class="text-2xl font-bold border-l-4 border-blue-500 pl-4 mb-6">ส่วนที่ 1: ข้อมูลทั่วไป</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <!-- Changed label and added 'required' attribute to input -->
+                            <label for="name" class="block mb-2 font-medium">ชื่อ-นามสกุล <span class="text-red-500">*</span></label>
+                            <input type="text" id="name" name="name" required class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="subjectGroup" class="block mb-2 font-medium">กลุ่มสาระการเรียนรู้หลัก <span class="text-red-500">*</span></label>
+                            <select id="subjectGroup" name="subjectGroup" required class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="" disabled selected>-- โปรดเลือก --</option>
+                                <option value="ภาษาไทย">ภาษาไทย</option>
+                                <option value="คณิตศาสตร์">คณิตศาสตร์</option>
+                                <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
+                                <option value="สังคมศึกษา ศาสนา และวัฒนธรรม">สังคมศึกษา ศาสนา และวัฒนธรรม</option>
+                                <option value="สุขศึกษาและพลศึกษา">สุขศึกษาและพลศึกษา</option>
+                                <option value="ศิลปะ">ศิลปะ</option>
+                                <option value="การงานอาชีพ">การงานอาชีพ</option>
+                                <option value="ภาษาต่างประเทศ">ภาษาต่างประเทศ</option>
+                                <option value="กิจกรรมพัฒนาผู้เรียน">กิจกรรมพัฒนาผู้เรียน</option>
+                                <option value="อื่นๆ">อื่นๆ</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="experience" class="block mb-2 font-medium">ประสบการณ์ในการสอน <span class="text-red-500">*</span></label>
+                            <select id="experience" name="experience" required class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
+                                 <option value="" disabled selected>-- โปรดเลือก --</option>
+                                <option value="0-3 ปี">0-3 ปี</option>
+                                <option value="4-10 ปี">4-10 ปี</option>
+                                <option value="11-20 ปี">11-20 ปี</option>
+                                <option value="มากกว่า 20 ปี">มากกว่า 20 ปี</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-2 font-medium">ระดับชั้นที่สอนเป็นหลัก <span class="text-red-500">*</span></label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="teachingLevel" value="ม.1" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ม.1</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="teachingLevel" value="ม.2" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ม.2</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="teachingLevel" value="ม.3" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ม.3</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="teachingLevel" value="ม.4" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ม.4</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="teachingLevel" value="ม.5" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ม.5</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="teachingLevel" value="ม.6" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ม.6</span></label></div>
+                            </div>
+                            <div id="teachingLevelError" class="error-message hidden">กรุณาเลือกอย่างน้อย 1 รายการ</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Development Needs -->
+                <div id="section2" class="form-section mb-12">
+                    <h2 class="text-2xl font-bold border-l-4 border-blue-500 pl-4 mb-6">ส่วนที่ 2: ความต้องการในการพัฒนาศักยภาพ</h2>
+                    <p class="mb-6 text-gray-600 dark:text-gray-300">โปรดระบุระดับความต้องการ โดย 1=น้อยที่สุด, 5=มากที่สุด</p>
+                    
+                    <!-- Subsection 2.1 -->
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-300">2.1 ด้านความรู้และเนื้อหาวิชาการ</h3>
+                    <div class="space-y-1">
+                        <div class="likert-scale"><span class="flex-1 pr-4">พัฒนาความรู้ในเนื้อหาวิชาที่สอนให้ทันสมัยและลึกซึ้ง</span> <div class="likert-options"> <input type="radio" id="q2_1_1_1" name="q2_1_1" value="1" required><label for="q2_1_1_1">1</label> <input type="radio" id="q2_1_1_2" name="q2_1_1" value="2"><label for="q2_1_1_2">2</label> <input type="radio" id="q2_1_1_3" name="q2_1_1" value="3"><label for="q2_1_1_3">3</label> <input type="radio" id="q2_1_1_4" name="q2_1_1" value="4"><label for="q2_1_1_4">4</label> <input type="radio" id="q2_1_1_5" name="q2_1_1" value="5"><label for="q2_1_1_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">บูรณาการเนื้อหาข้ามกลุ่มสาระการเรียนรู้</span> <div class="likert-options"> <input type="radio" id="q2_1_2_1" name="q2_1_2" value="1" required><label for="q2_1_2_1">1</label> <input type="radio" id="q2_1_2_2" name="q2_1_2" value="2"><label for="q2_1_2_2">2</label> <input type="radio" id="q2_1_2_3" name="q2_1_2" value="3"><label for="q2_1_2_3">3</label> <input type="radio" id="q2_1_2_4" name="q2_1_2" value="4"><label for="q2_1_2_4">4</label> <input type="radio" id="q2_1_2_5" name="q2_1_2" value="5"><label for="q2_1_2_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">วิเคราะห์หลักสูตรและออกแบบหน่วยการเรียนรู้ที่สอดคล้อง</span> <div class="likert-options"> <input type="radio" id="q2_1_3_1" name="q2_1_3" value="1" required><label for="q2_1_3_1">1</label> <input type="radio" id="q2_1_3_2" name="q2_1_3" value="2"><label for="q2_1_3_2">2</label> <input type="radio" id="q2_1_3_3" name="q2_1_3" value="3"><label for="q2_1_3_3">3</label> <input type="radio" id="q2_1_3_4" name="q2_1_3" value="4"><label for="q2_1_3_4">4</label> <input type="radio" id="q2_1_3_5" name="q2_1_3" value="5"><label for="q2_1_3_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">พัฒนาความรู้เกี่ยวกับนวัตกรรมการศึกษาใหม่ๆ</span> <div class="likert-options"> <input type="radio" id="q2_1_4_1" name="q2_1_4" value="1" required><label for="q2_1_4_1">1</label> <input type="radio" id="q2_1_4_2" name="q2_1_4" value="2"><label for="q2_1_4_2">2</label> <input type="radio" id="q2_1_4_3" name="q2_1_4" value="3"><label for="q2_1_4_3">3</label> <input type="radio" id="q2_1_4_4" name="q2_1_4" value="4"><label for="q2_1_4_4">4</label> <input type="radio" id="q2_1_4_5" name="q2_1_4" value="5"><label for="q2_1_4_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">นำเทคโนโลยีมาประยุกต์ใช้กับเนื้อหาวิชา (TPACK)</span> <div class="likert-options"> <input type="radio" id="q2_1_5_1" name="q2_1_5" value="1" required><label for="q2_1_5_1">1</label> <input type="radio" id="q2_1_5_2" name="q2_1_5" value="2"><label for="q2_1_5_2">2</label> <input type="radio" id="q2_1_5_3" name="q2_1_5" value="3"><label for="q2_1_5_3">3</label> <input type="radio" id="q2_1_5_4" name="q2_1_5" value="4"><label for="q2_1_5_4">4</label> <input type="radio" id="q2_1_5_5" name="q2_1_5" value="5"><label for="q2_1_5_5">5</label> </div></div>
+                    </div>
+                    
+                    <!-- Subsection 2.2 -->
+                    <h3 class="text-xl font-semibold mt-8 mb-4 text-blue-700 dark:text-blue-300">2.2 ด้านทักษะการจัดการเรียนรู้</h3>
+                    <div class="space-y-1">
+                        <div class="likert-scale"><span class="flex-1 pr-4">ออกแบบกิจกรรมการเรียนรู้เชิงรุก (Active Learning)</span> <div class="likert-options"> <input type="radio" id="q2_2_1_1" name="q2_2_1" value="1" required><label for="q2_2_1_1">1</label> <input type="radio" id="q2_2_1_2" name="q2_2_1" value="2"><label for="q2_2_1_2">2</label> <input type="radio" id="q2_2_1_3" name="q2_2_1" value="3"><label for="q2_2_1_3">3</label> <input type="radio" id="q2_2_1_4" name="q2_2_1" value="4"><label for="q2_2_1_4">4</label> <input type="radio" id="q2_2_1_5" name="q2_2_1" value="5"><label for="q2_2_1_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">ใช้คำถามกระตุ้นการคิดขั้นสูงของผู้เรียน</span> <div class="likert-options"> <input type="radio" id="q2_2_2_1" name="q2_2_2" value="1" required><label for="q2_2_2_1">1</label> <input type="radio" id="q2_2_2_2" name="q2_2_2" value="2"><label for="q2_2_2_2">2</label> <input type="radio" id="q2_2_2_3" name="q2_2_2" value="3"><label for="q2_2_2_3">3</label> <input type="radio" id="q2_2_2_4" name="q2_2_2" value="4"><label for="q2_2_2_4">4</label> <input type="radio" id="q2_2_2_5" name="q2_2_2" value="5"><label for="q2_2_2_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">จัดการชั้นเรียนเชิงบวก (Positive Classroom Management)</span> <div class="likert-options"> <input type="radio" id="q2_2_3_1" name="q2_2_3" value="1" required><label for="q2_2_3_1">1</label> <input type="radio" id="q2_2_3_2" name="q2_2_3" value="2"><label for="q2_2_3_2">2</label> <input type="radio" id="q2_2_3_3" name="q2_2_3" value="3"><label for="q2_2_3_3">3</label> <input type="radio" id="q2_2_3_4" name="q2_2_3" value="4"><label for="q2_2_3_4">4</label> <input type="radio" id="q2_2_3_5" name="q2_2_3" value="5"><label for="q2_2_3_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">สอนนักเรียนที่มีความแตกต่างหลากหลาย (Differentiated Instruction)</span> <div class="likert-options"> <input type="radio" id="q2_2_4_1" name="q2_2_4" value="1" required><label for="q2_2_4_1">1</label> <input type="radio" id="q2_2_4_2" name="q2_2_4" value="2"><label for="q2_2_4_2">2</label> <input type="radio" id="q2_2_4_3" name="q2_2_4" value="3"><label for="q2_2_4_3">3</label> <input type="radio" id="q2_2_4_4" name="q2_2_4" value="4"><label for="q2_2_4_4">4</label> <input type="radio" id="q2_2_4_5" name="q2_2_4" value="5"><label for="q2_2_4_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">วัดและประเมินผลที่สอดคล้องกับสมรรถนะผู้เรียน</span> <div class="likert-options"> <input type="radio" id="q2_2_5_1" name="q2_2_5" value="1" required><label for="q2_2_5_1">1</label> <input type="radio" id="q2_2_5_2" name="q2_2_5" value="2"><label for="q2_2_5_2">2</label> <input type="radio" id="q2_2_5_3" name="q2_2_5" value="3"><label for="q2_2_5_3">3</label> <input type="radio" id="q2_2_5_4" name="q2_2_5" value="4"><label for="q2_2_5_4">4</label> <input type="radio" id="q2_2_5_5" name="q2_2_5" value="5"><label for="q2_2_5_5">5</label> </div></div>
+                    </div>
+                    
+                    <!-- Subsection 2.3 -->
+                    <h3 class="text-xl font-semibold mt-8 mb-4 text-blue-700 dark:text-blue-300">2.3 ด้านการใช้เทคโนโลยีดิจิทัล</h3>
+                    <div class="space-y-1">
+                        <div class="likert-scale"><span class="flex-1 pr-4">ใช้เครื่องมือ/แอปฯ ดิจิทัลสร้างสื่อการสอนที่น่าสนใจ</span> <div class="likert-options"> <input type="radio" id="q2_3_1_1" name="q2_3_1" value="1" required><label for="q2_3_1_1">1</label> <input type="radio" id="q2_3_1_2" name="q2_3_1" value="2"><label for="q2_3_1_2">2</label> <input type="radio" id="q2_3_1_3" name="q2_3_1" value="3"><label for="q2_3_1_3">3</label> <input type="radio" id="q2_3_1_4" name="q2_3_1" value="4"><label for="q2_3_1_4">4</label> <input type="radio" id="q2_3_1_5" name="q2_3_1" value="5"><label for="q2_3_1_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">ใช้แพลตฟอร์มการเรียนรู้ (LMS) อย่างมีประสิทธิภาพ</span> <div class="likert-options"> <input type="radio" id="q2_3_2_1" name="q2_3_2" value="1" required><label for="q2_3_2_1">1</label> <input type="radio" id="q2_3_2_2" name="q2_3_2" value="2"><label for="q2_3_2_2">2</label> <input type="radio" id="q2_3_2_3" name="q2_3_2" value="3"><label for="q2_3_2_3">3</label> <input type="radio" id="q2_3_2_4" name="q2_3_2" value="4"><label for="q2_3_2_4">4</label> <input type="radio" id="q2_3_2_5" name="q2_3_2" value="5"><label for="q2_3_2_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">จัดการเรียนการสอนแบบผสมผสาน (Blended Learning)</span> <div class="likert-options"> <input type="radio" id="q2_3_3_1" name="q2_3_3" value="1" required><label for="q2_3_3_1">1</label> <input type="radio" id="q2_3_3_2" name="q2_3_3" value="2"><label for="q2_3_3_2">2</label> <input type="radio" id="q2_3_3_3" name="q2_3_3" value="3"><label for="q2_3_3_3">3</label> <input type="radio" id="q2_3_3_4" name="q2_3_3" value="4"><label for="q2_3_3_4">4</label> <input type="radio" id="q2_3_3_5" name="q2_3_3" value="5"><label for="q2_3_3_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">ประยุกต์ใช้ปัญญาประดิษฐ์ (AI) เพื่อการศึกษา</span> <div class="likert-options"> <input type="radio" id="q2_3_4_1" name="q2_3_4" value="1" required><label for="q2_3_4_1">1</label> <input type="radio" id="q2_3_4_2" name="q2_3_4" value="2"><label for="q2_3_4_2">2</label> <input type="radio" id="q2_3_4_3" name="q2_3_4" value="3"><label for="q2_3_4_3">3</label> <input type="radio" id="q2_3_4_4" name="q2_3_4" value="4"><label for="q2_3_4_4">4</label> <input type="radio" id="q2_3_4_5" name="q2_3_4" value="5"><label for="q2_3_4_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">สร้างเสริมทักษะพลเมืองดิจิทัล (Digital Citizenship)</span> <div class="likert-options"> <input type="radio" id="q2_3_5_1" name="q2_3_5" value="1" required><label for="q2_3_5_1">1</label> <input type="radio" id="q2_3_5_2" name="q2_3_5" value="2"><label for="q2_3_5_2">2</label> <input type="radio" id="q2_3_5_3" name="q2_3_5" value="3"><label for="q2_3_5_3">3</label> <input type="radio" id="q2_3_5_4" name="q2_3_4_4" value="4"><label for="q2_3_4_4">4</label> <input type="radio" id="q2_3_5_5" name="q2_3_5" value="5"><label for="q2_3_5_5">5</label> </div></div>
+                    </div>
+
+                    <!-- Subsection 2.4 -->
+                    <h3 class="text-xl font-semibold mt-8 mb-4 text-blue-700 dark:text-blue-300">2.4 ด้านการดูแลและส่งเสริมนักเรียน</h3>
+                     <div class="space-y-1">
+                        <div class="likert-scale"><span class="flex-1 pr-4">ความเข้าใจจิตวิทยาวัยรุ่นและการส่งเสริมสุขภาพจิต</span> <div class="likert-options"> <input type="radio" id="q2_4_1_1" name="q2_4_1" value="1" required><label for="q2_4_1_1">1</label> <input type="radio" id="q2_4_1_2" name="q2_4_1" value="2"><label for="q2_4_1_2">2</label> <input type="radio" id="q2_4_1_3" name="q2_4_1" value="3"><label for="q2_4_1_3">3</label> <input type="radio" id="q2_4_1_4" name="q2_4_1" value="4"><label for="q2_4_1_4">4</label> <input type="radio" id="q2_4_1_5" name="q2_4_1" value="5"><label for="q2_4_1_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">ทักษะการให้คำปรึกษาเบื้องต้นและการรับฟังอย่างเข้าใจ</span> <div class="likert-options"> <input type="radio" id="q2_4_2_1" name="q2_4_2" value="1" required><label for="q2_4_2_1">1</label> <input type="radio" id="q2_4_2_2" name="q2_4_2" value="2"><label for="q2_4_2_2">2</label> <input type="radio" id="q2_4_2_3" name="q2_4_2" value="3"><label for="q2_4_2_3">3</label> <input type="radio" id="q2_4_2_4" name="q2_4_2" value="4"><label for="q2_4_2_4">4</label> <input type="radio" id="q2_4_2_5" name="q2_4_2" value="5"><label for="q2_4_2_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">การสร้างความสัมพันธ์เชิงบวกกับนักเรียนและผู้ปกครอง</span> <div class="likert-options"> <input type="radio" id="q2_4_3_1" name="q2_4_3" value="1" required><label for="q2_4_3_1">1</label> <input type="radio" id="q2_4_3_2" name="q2_4_3" value="2"><label for="q2_4_3_2">2</label> <input type="radio" id="q2_4_3_3" name="q2_4_3" value="3"><label for="q2_4_3_3">3</label> <input type="radio" id="q2_4_3_4" name="q2_4_3" value="4"><label for="q2_4_3_4">4</label> <input type="radio" id="q2_4_3_5" name="q2_4_3" value="5"><label for="q2_4_3_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">การคัดกรองและส่งต่อนักเรียนกลุ่มเสี่ยง</span> <div class="likert-options"> <input type="radio" id="q2_4_4_1" name="q2_4_4" value="1" required><label for="q2_4_4_1">1</label> <input type="radio" id="q2_4_4_2" name="q2_4_4" value="2"><label for="q2_4_4_2">2</label> <input type="radio" id="q2_4_4_3" name="q2_4_4" value="3"><label for="q2_4_4_3">3</label> <input type="radio" id="q2_4_4_4" name="q2_4_4" value="4"><label for="q2_4_4_4">4</label> <input type="radio" id="q2_4_4_5" name="q2_4_4" value="5"><label for="q2_4_4_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">การส่งเสริมทักษะชีวิต (Life Skills) และทักษะสังคมอารมณ์ (SEL)</span> <div class="likert-options"> <input type="radio" id="q2_4_5_1" name="q2_4_5" value="1" required><label for="q2_4_5_1">1</label> <input type="radio" id="q2_4_5_2" name="q2_4_5" value="2"><label for="q2_4_5_2">2</label> <input type="radio" id="q2_4_5_3" name="q2_4_5" value="3"><label for="q2_4_5_3">3</label> <input type="radio" id="q2_4_5_4" name="q2_4_5" value="4"><label for="q2_4_5_4">4</label> <input type="radio" id="q2_4_5_5" name="q2_4_5" value="5"><label for="q2_4_5_5">5</label> </div></div>
+                     </div>
+
+                    <!-- Subsection 2.5 -->
+                    <h3 class="text-xl font-semibold mt-8 mb-4 text-blue-700 dark:text-blue-300">2.5 ด้านการพัฒนาตนเองและวิชาชีพ</h3>
+                     <div class="space-y-1">
+                        <div class="likert-scale"><span class="flex-1 pr-4">การทำงานร่วมกันแบบชุมชนแห่งการเรียนรู้ (PLC)</span> <div class="likert-options"> <input type="radio" id="q2_5_1_1" name="q2_5_1" value="1" required><label for="q2_5_1_1">1</label> <input type="radio" id="q2_5_1_2" name="q2_5_1" value="2"><label for="q2_5_1_2">2</label> <input type="radio" id="q2_5_1_3" name="q2_5_1" value="3"><label for="q2_5_1_3">3</label> <input type="radio" id="q2_5_1_4" name="q2_5_1" value="4"><label for="q2_5_1_4">4</label> <input type="radio" id="q2_5_1_5" name="q2_5_1" value="5"><label for="q2_5_1_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">การทำวิจัยในชั้นเรียนเพื่อพัฒนานวัตกรรม</span> <div class="likert-options"> <input type="radio" id="q2_5_2_1" name="q2_5_2" value="1" required><label for="q2_5_2_1">1</label> <input type="radio" id="q2_5_2_2" name="q2_5_2" value="2"><label for="q2_5_2_2">2</label> <input type="radio" id="q2_5_2_3" name="q2_5_2" value="3"><label for="q2_5_2_3">3</label> <input type="radio" id="q2_5_2_4" name="q2_5_2" value="4"><label for="q2_5_2_4">4</label> <input type="radio" id="q2_5_2_5" name="q2_5_2" value="5"><label for="q2_5_2_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">ทักษะการเป็นพี่เลี้ยง (Mentoring) ให้เพื่อนครู</span> <div class="likert-options"> <input type="radio" id="q2_5_3_1" name="q2_5_3" value="1" required><label for="q2_5_3_1">1</label> <input type="radio" id="q2_5_3_2" name="q2_5_3" value="2"><label for="q2_5_3_2">2</label> <input type="radio" id="q2_5_3_3" name="q2_5_3" value="3"><label for="q2_5_3_3">3</label> <input type="radio" id="q2_5_3_4" name="q2_5_3" value="4"><label for="q2_5_3_4">4</label> <input type="radio" id="q2_5_3_5" name="q2_5_3" value="5"><label for="q2_5_3_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">ทักษะการสื่อสารและการนำเสนอผลงานทางวิชาการ</span> <div class="likert-options"> <input type="radio" id="q2_5_4_1" name="q2_5_4" value="1" required><label for="q2_5_4_1">1</label> <input type="radio" id="q2_5_4_2" name="q2_5_4" value="2"><label for="q2_5_4_2">2</label> <input type="radio" id="q2_5_4_3" name="q2_5_4" value="3"><label for="q2_5_4_3">3</label> <input type="radio" id="q2_5_4_4" name="q2_5_4" value="4"><label for="q2_5_4_4">4</label> <input type="radio" id="q2_5_4_5" name="q2_5_4" value="5"><label for="q2_5_4_5">5</label> </div></div>
+                        <div class="likert-scale"><span class="flex-1 pr-4">การจัดการความเครียดและสร้างสมดุลชีวิตการทำงาน</span> <div class="likert-options"> <input type="radio" id="q2_5_5_1" name="q2_5_5" value="1" required><label for="q2_5_5_1">1</label> <input type="radio" id="q2_5_5_2" name="q2_5_5" value="2"><label for="q2_5_5_2">2</label> <input type="radio" id="q2_5_5_3" name="q2_5_5" value="3"><label for="q2_5_5_3">3</label> <input type="radio" id="q2_5_5_4" name="q2_5_5" value="4"><label for="q2_5_5_4">4</label> <input type="radio" id="q2_5_5_5" name="q2_5_5" value="5"><label for="q2_5_5_5">5</label> </div></div>
+                     </div>
+                </div>
+
+                <!-- Section 3: Format & Time -->
+                <div id="section3" class="form-section mb-12">
+                    <h2 class="text-2xl font-bold border-l-4 border-blue-500 pl-4 mb-6">ส่วนที่ 3: รูปแบบและช่วงเวลาที่ต้องการ</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div>
+                            <label class="block mb-2 font-medium">รูปแบบการพัฒนาที่สนใจ <span class="text-red-500">*</span><br><span class="text-sm text-gray-500">(เลือกได้มากกว่า 1 ข้อ)</span></label>
+                            <div class="space-y-2">
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devFormat" value="Workshop ภายใน" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">Workshop ภายใน รร.</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devFormat" value="Online (Self-paced)" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">Online (เรียนด้วยตนเอง)</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devFormat" value="Online (Live)" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">Online (สอนสด)</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devFormat" value="ศึกษาดูงาน" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ศึกษาดูงาน</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devFormat" value="PLC" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">เข้าร่วม PLC</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devFormat" value="Coaching" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">Coaching/Mentoring</span></label></div>
+                            </div>
+                            <div id="devFormatError" class="error-message hidden">กรุณาเลือกอย่างน้อย 1 รายการ</div>
+                        </div>
+
+                        <div>
+                             <label for="devDuration" class="block mb-2 font-medium">ระยะเวลาที่เหมาะสม <span class="text-red-500">*</span></label>
+                            <select id="devDuration" name="devDuration" required class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="" disabled selected>-- โปรดเลือก --</option>
+                                <option value="ครึ่งวัน (3-4 ชม.)">ครึ่งวัน (3-4 ชม.)</option>
+                                <option value="1 วันเต็ม (6-7 ชม.)">1 วันเต็ม (6-7 ชม.)</option>
+                                <option value="2 วัน">2 วัน</option>
+                                <option value="หลักสูตรระยะสั้น (หลายสัปดาห์)">หลักสูตรระยะสั้น (หลายสัปดาห์)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block mb-2 font-medium">ช่วงเวลาที่สะดวก <span class="text-red-500">*</span><br><span class="text-sm text-gray-500">(เลือกได้มากกว่า 1 ข้อ)</span></label>
+                            <div class="space-y-2">
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันธรรมดา หลังเลิกเรียน" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันธรรมดา หลังเลิกเรียน</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันเสาร์ (เต็มวัน)" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันเสาร์ (เต็มวัน)</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันเสาร์ (ครึ่งวัน)" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันเสาร์ (ครึ่งวัน)</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="ช่วงปิดภาคเรียน" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ช่วงปิดภาคเรียน</span></label></div>
+                            </div>
+                             <div id="devTimeError" class="error-message hidden">กรุณาเลือกอย่างน้อย 1 รายการ</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Feedback -->
+                <div id="section4" class="form-section">
+                    <h2 class="text-2xl font-bold border-l-4 border-blue-500 pl-4 mb-6">ส่วนที่ 4: ข้อเสนอแนะเพิ่มเติม</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label for="otherTopics" class="block mb-2 font-medium">หากมีหัวข้อการพัฒนาอื่นๆ ที่ท่านสนใจ นอกเหนือจากที่กล่าวมา โปรดระบุ</label>
+                            <textarea id="otherTopics" name="otherTopics" rows="3" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <label for="suggestions" class="block mb-2 font-medium">ข้อเสนอแนะอื่นๆ เพื่อให้การจัดกิจกรรมมีประสิทธิภาพยิ่งขึ้น</label>
+                            <textarea id="suggestions" name="suggestions" rows="3" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submission -->
+                <div class="mt-12 text-center">
+                    <div id="formError" class="error-message text-center text-lg mb-4 hidden">กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย <span class="text-red-500">*</span> ให้ครบทุกช่อง</div>
+                    <button type="submit" id="submitButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                        ส่งแบบสอบถาม
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Thank You Message -->
+    <div id="thankYouMessage" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-auto animate-fade-in-up">
+             <svg class="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h2 class="text-2xl font-bold mb-2">ส่งข้อมูลสำเร็จ!</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">ขอขอบพระคุณที่สละเวลาตอบแบบสอบถาม ข้อมูลของท่านมีค่าอย่างยิ่งต่อการพัฒนาของเรา</p>
+            <button id="viewSummaryButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                สรุปผลการสำรวจ
+            </button>
+        </div>
+    </div>
+    
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+
+    <!-- Survey Summary Section -->
+    <div id="surveySummary" class="container mx-auto p-4 sm:p-6 md:p-8 max-w-4xl mt-12 mb-8 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 md:p-12">
+            <h2 class="text-2xl font-bold border-l-4 border-blue-500 pl-4 mb-6">สรุปผลการสำรวจ</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="chart-container">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-300">กลุ่มสาระการเรียนรู้หลัก</h3>
+                    <canvas id="subjectGroupChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-300">ประสบการณ์ในการสอน</h3>
+                    <canvas id="experienceChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-300">ระดับชั้นที่สอนเป็นหลัก</h3>
+                    <canvas id="teachingLevelChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-300">รูปแบบการพัฒนาที่สนใจ</h3>
+                    <canvas id="devFormatChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-300">ระยะเวลาที่เหมาะสม</h3>
+                    <canvas id="devDurationChart"></canvas>
+                </div>
+                 <div class="chart-container">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-300">ช่วงเวลาที่สะดวก</h3>
+                    <canvas id="devTimeChart"></canvas>
+                </div>
+                <div class="chart-container md:col-span-2">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-300">คะแนนเฉลี่ยความต้องการพัฒนาศักยภาพ (1=น้อยที่สุด, 5=มากที่สุด)</h3>
+                    <canvas id="developmentNeedsAvgChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // URL ของ Google Apps Script ที่คุณปรับใช้
+        // โปรดเปลี่ยน URL นี้เป็น URL ที่ Deploy แล้วของคุณ
+        const GOOGLE_APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyFlhXbtOXLTNsnwdSpVbKharAEs-ZjIDBdsHd56Fy4MMSzjjJpUdSmmOyDWjfhVsmc_g/exec';
+
+        // --- DOM Elements ---
+        const form = document.getElementById('surveyForm');
+        const submitButton = document.getElementById('submitButton');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const thankYouMessage = document.getElementById('thankYouMessage');
+        const viewSummaryButton = document.getElementById('viewSummaryButton'); 
+        const surveyContainer = document.getElementById('surveyContainer');
+        const formErrorMsg = document.getElementById('formError');
+        const surveySummarySection = document.getElementById('surveySummary');
+        const progressBarContainer = document.getElementById('progressBarContainer'); 
+
+        // Chart instances
+        let subjectGroupChart, experienceChart, teachingLevelChart, devFormatChart, devDurationChart, devTimeChart, developmentNeedsAvgChart;
+
+        // --- Progress Bar Logic ---
+        const progressBar = document.getElementById('progressBar');
+        const sections = document.querySelectorAll('.form-section');
+        const totalSections = sections.length;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionId = entry.target.id;
+                    const sectionIndex = Array.from(sections).findIndex(sec => sec.id === sectionId);
+                    const progress = ((sectionIndex + 1) / totalSections) * 100;
+                    progressBar.style.width = `${progress}%`;
+                }
+            });
+        }, { root: null, rootMargin: "0px", threshold: 0.5 });
+
+        sections.forEach(section => observer.observe(section));
+
+        // --- Form Validation & Submission ---
+        function validateForm() {
+            let isValid = true;
+            let firstInvalidElement = null;
+
+            // Reset previous errors
+            document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+            document.querySelectorAll('.error-message').forEach(el => el.classList.add('hidden'));
+            formErrorMsg.classList.add('hidden');
+
+            // Check required selects and inputs
+            form.querySelectorAll('select[required], input[type="text"][required], textarea[required]').forEach(input => {
+                if (input.hasAttribute('required') && !input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('input-error');
+                    if (!firstInvalidElement) firstInvalidElement = input;
+                }
+            });
+
+            // Check required radio button groups
+            const radioGroups = [...new Set(Array.from(form.querySelectorAll('input[type="radio"][required]')).map(r => r.name))];
+            radioGroups.forEach(name => {
+                if (!form.querySelector(`input[name="${name}"]:checked`)) {
+                    isValid = false;
+                    const groupContainer = form.querySelector(`input[name="${name}"]`).closest('.likert-scale');
+                     if(groupContainer) groupContainer.classList.add('input-error');
+                    if (!firstInvalidElement) firstInvalidElement = groupContainer;
+                }
+            });
+
+            // Check required checkbox groups
+            const checkboxGroups = [
+                { name: 'teachingLevel', errorId: 'teachingLevelError' },
+                { name: 'devFormat', errorId: 'devFormatError' },
+                { name: 'devTime', errorId: 'devTimeError' }
+            ];
+            checkboxGroups.forEach(group => {
+                if (form.querySelectorAll(`input[name="${group.name}"]:checked`).length === 0) {
+                    isValid = false;
+                    const errorDiv = document.getElementById(group.errorId);
+                    errorDiv.classList.remove('hidden');
+                    if (!firstInvalidElement) firstInvalidElement = errorDiv;
+                }
+            });
+
+            if (!isValid) {
+                formErrorMsg.classList.remove('hidden');
+                if (firstInvalidElement) {
+                    firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+            return isValid;
+        }
+
+        // Function to fetch data from Google Apps Script
+        async function fetchSurveyData() {
+            try {
+                // Use a different URL for doGet if your Apps Script deployment creates separate ones.
+                // Otherwise, the same 'exec' URL with GET method should work.
+                const response = await fetch(GOOGLE_APP_SCRIPT_URL, {
+                    method: 'GET',
+                    mode: 'cors' 
+                });
+                const result = await response.json();
+                return result.data || [];
+            } catch (error) {
+                console.error("Error fetching survey data: ", error);
+                return [];
+            }
+        }
+
+        // Function to process data and prepare for charts
+        function processDataForCharts(data) {
+            const subjectGroupCounts = {};
+            const experienceCounts = {};
+            const teachingLevelCounts = {};
+            const devFormatCounts = {};
+            const devDurationCounts = {};
+            const devTimeCounts = {};
+
+            // For Likert scale averages
+            const developmentNeedsScores = {
+                subjectMatter: [],
+                pedagogy: [],
+                digital: [],
+                studentSupport: [],
+                professional: []
+            };
+
+            data.forEach(entry => {
+                // Subject Group
+                subjectGroupCounts[entry.SubjectGroup] = (subjectGroupCounts[entry.SubjectGroup] || 0) + 1;
+
+                // Experience
+                experienceCounts[entry.Experience] = (experienceCounts[entry.Experience] || 0) + 1;
+
+                // Teaching Levels (split by comma if multiple selected)
+                if (entry.TeachingLevels) {
+                    entry.TeachingLevels.split(', ').forEach(level => {
+                        teachingLevelCounts[level] = (teachingLevelCounts[level] || 0) + 1;
+                    });
+                }
+                
+                // Development Formats (split by comma)
+                if (entry.FormatPreferences_Formats) {
+                    entry.FormatPreferences_Formats.split(', ').forEach(format => {
+                        devFormatCounts[format] = (devFormatCounts[format] || 0) + 1;
+                    });
+                }
+
+                // Development Duration
+                devDurationCounts[entry.FormatPreferences_Duration] = (devDurationCounts[entry.FormatPreferences_Duration] || 0) + 1;
+
+                // Development Times (split by comma)
+                if (entry.FormatPreferences_Times) {
+                    entry.FormatPreferences_Times.split(', ').forEach(time => {
+                        devTimeCounts[time] = (devTimeCounts[time] || 0) + 1;
+                    });
+                }
+
+                // Likert Scale Scores (parse to number)
+                if (entry.DevNeeds_SubjectMatter_Knowledge) developmentNeedsScores.subjectMatter.push(parseInt(entry.DevNeeds_SubjectMatter_Knowledge));
+                if (entry.DevNeeds_SubjectMatter_Integration) developmentNeedsScores.subjectMatter.push(parseInt(entry.DevNeeds_SubjectMatter_Integration));
+                if (entry.DevNeeds_SubjectMatter_Curriculum) developmentNeedsScores.subjectMatter.push(parseInt(entry.DevNeeds_SubjectMatter_Curriculum));
+                if (entry.DevNeeds_SubjectMatter_Innovation) developmentNeedsScores.subjectMatter.push(parseInt(entry.DevNeeds_SubjectMatter_Innovation));
+                if (entry.DevNeeds_SubjectMatter_TechApplication) developmentNeedsScores.subjectMatter.push(parseInt(entry.DevNeeds_SubjectMatter_TechApplication));
+                
+                if (entry.DevNeeds_Pedagogy_ActiveLearning) developmentNeedsScores.pedagogy.push(parseInt(entry.DevNeeds_Pedagogy_ActiveLearning));
+                if (entry.DevNeeds_Pedagogy_HigherOrderThinking) developmentNeedsScores.pedagogy.push(parseInt(entry.DevNeeds_Pedagogy_HigherOrderThinking));
+                if (entry.DevNeeds_Pedagogy_ClassroomManagement) developmentNeedsScores.pedagogy.push(parseInt(entry.DevNeeds_Pedagogy_ClassroomManagement));
+                if (entry.DevNeeds_Pedagogy_Differentiation) developmentNeedsScores.pedagogy.push(parseInt(entry.DevNeeds_Pedagogy_Differentiation));
+                if (entry.DevNeeds_Pedagogy_Assessment) developmentNeedsScores.pedagogy.push(parseInt(entry.DevNeeds_Pedagogy_Assessment));
+
+                if (entry.DevNeeds_Digital_Tools) developmentNeedsScores.digital.push(parseInt(entry.DevNeeds_Digital_Tools));
+                if (entry.DevNeeds_Digital_LMS) developmentNeedsScores.digital.push(parseInt(entry.DevNeeds_Digital_LMS));
+                if (entry.DevNeeds_Digital_Blended) developmentNeedsScores.digital.push(parseInt(entry.DevNeeds_Digital_Blended));
+                if (entry.DevNeeds_Digital_AI) developmentNeedsScores.digital.push(parseInt(entry.DevNeeds_Digital_AI));
+                if (entry.DevNeeds_Digital_Citizenship) developmentNeedsScores.digital.push(parseInt(entry.DevNeeds_Digital_Citizenship));
+
+                if (entry.DevNeeds_StudentSupport_Psychology) developmentNeedsScores.studentSupport.push(parseInt(entry.DevNeeds_StudentSupport_Psychology));
+                if (entry.DevNeeds_StudentSupport_Counseling) developmentNeedsScores.studentSupport.push(parseInt(entry.DevNeeds_StudentSupport_Counseling));
+                if (entry.DevNeeds_StudentSupport_Relationships) developmentNeedsScores.studentSupport.push(parseInt(entry.DevNeeds_StudentSupport_Relationships));
+                if (entry.DevNeeds_StudentSupport_Screening) developmentNeedsScores.studentSupport.push(parseInt(entry.DevNeeds_StudentSupport_Screening));
+                if (entry.DevNeeds_StudentSupport_LifeSkills) developmentNeedsScores.studentSupport.push(parseInt(entry.DevNeeds_StudentSupport_LifeSkills));
+                
+                if (entry.DevNeeds_Professional_PLC) developmentNeedsScores.professional.push(parseInt(entry.DevNeeds_Professional_PLC));
+                if (entry.DevNeeds_Professional_Research) developmentNeedsScores.professional.push(parseInt(entry.DevNeeds_Professional_Research));
+                if (entry.DevNeeds_Professional_Mentoring) developmentNeedsScores.professional.push(parseInt(entry.DevNeeds_Professional_Mentoring));
+                if (entry.DevNeeds_Professional_Communication) developmentNeedsScores.professional.push(parseInt(entry.DevNeeds_Professional_Communication));
+                if (entry.DevNeeds_Professional_SelfCare) developmentNeedsScores.professional.push(parseInt(entry.DevNeeds_Professional_SelfCare));
+            });
+
+            // Calculate averages for Likert scales
+            const calculateAverage = (arr) => arr.length ? (arr.reduce((sum, val) => sum + val, 0) / arr.length).toFixed(2) : 0;
+            const developmentNeedsAvg = {
+                'ด้านความรู้และเนื้อหาวิชาการ': calculateAverage(developmentNeedsScores.subjectMatter),
+                'ด้านทักษะการจัดการเรียนรู้': calculateAverage(developmentNeedsScores.pedagogy),
+                'ด้านการใช้เทคโนโลยีดิจิทัล': calculateAverage(developmentNeedsScores.digital),
+                'ด้านการดูแลและส่งเสริมนักเรียน': calculateAverage(developmentNeedsScores.studentSupport),
+                'ด้านการพัฒนาตนเองและวิชาชีพ': calculateAverage(developmentNeedsScores.professional)
+            };
+
+            return {
+                subjectGroupCounts,
+                experienceCounts,
+                teachingLevelCounts,
+                devFormatCounts,
+                devDurationCounts,
+                devTimeCounts,
+                developmentNeedsAvg
+            };
+        }
+
+        // Function to render charts
+        function renderCharts(processedData) {
+            // Destroy existing charts if they exist
+            if (subjectGroupChart) subjectGroupChart.destroy();
+            if (experienceChart) experienceChart.destroy();
+            if (teachingLevelChart) teachingLevelChart.destroy();
+            if (devFormatChart) devFormatChart.destroy();
+            if (devDurationChart) devDurationChart.destroy();
+            if (devTimeChart) devTimeChart.destroy();
+            if (developmentNeedsAvgChart) developmentNeedsAvgChart.destroy();
+
+            // Helper for chart background colors
+            const getChartColors = (numColors) => {
+                const colors = [
+                    'rgba(59, 130, 246, 0.6)', // Blue
+                    'rgba(16, 185, 129, 0.6)', // Emerald
+                    'rgba(245, 158, 11, 0.6)', // Amber
+                    'rgba(239, 68, 68, 0.6)',  // Red
+                    'rgba(139, 92, 246, 0.6)', // Violet
+                    'rgba(251, 191, 36, 0.6)', // Yellow
+                    'rgba(96, 165, 250, 0.6)', // Light Blue
+                    'rgba(20, 184, 166, 0.6)', // Teal
+                    'rgba(253, 224, 71, 0.6)', // Light Yellow
+                    'rgba(248, 113, 113, 0.6)', // Light Red
+                ];
+                // Repeat or truncate colors if needed
+                return Array.from({ length: numColors }, (_, i) => colors[i % colors.length]);
+            };
+
+            // Subject Group Chart
+            const sgLabels = Object.keys(processedData.subjectGroupCounts);
+            const sgData = Object.values(processedData.subjectGroupCounts);
+            subjectGroupChart = new Chart(document.getElementById('subjectGroupChart'), {
+                type: 'pie',
+                data: {
+                    labels: sgLabels,
+                    datasets: [{
+                        data: sgData,
+                        backgroundColor: getChartColors(sgLabels.length),
+                        borderColor: getChartColors(sgLabels.length).map(c => c.replace('0.6', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+
+            // Experience Chart
+            const expLabels = Object.keys(processedData.experienceCounts);
+            const expData = Object.values(processedData.experienceCounts);
+            experienceChart = new Chart(document.getElementById('experienceChart'), {
+                type: 'bar',
+                data: {
+                    labels: expLabels,
+                    datasets: [{
+                        label: 'จำนวนผู้ตอบ',
+                        data: expData,
+                        backgroundColor: getChartColors(expLabels.length),
+                        borderColor: getChartColors(expLabels.length).map(c => c.replace('0.6', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'จำนวนผู้ตอบ'
+                            },
+                            ticks: {
+                                precision: 0 // Ensure integer ticks
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Teaching Level Chart
+            const tlLabels = Object.keys(processedData.teachingLevelCounts);
+            const tlData = Object.values(processedData.teachingLevelCounts);
+            teachingLevelChart = new Chart(document.getElementById('teachingLevelChart'), {
+                type: 'bar',
+                data: {
+                    labels: tlLabels,
+                    datasets: [{
+                        label: 'จำนวนผู้ตอบ',
+                        data: tlData,
+                        backgroundColor: getChartColors(tlLabels.length),
+                        borderColor: getChartColors(tlLabels.length).map(c => c.replace('0.6', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                     scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'จำนวนผู้ตอบ'
+                            },
+                            ticks: {
+                                precision: 0 // Ensure integer ticks
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Development Format Chart
+            const dfLabels = Object.keys(processedData.devFormatCounts);
+            const dfData = Object.values(processedData.devFormatCounts);
+            devFormatChart = new Chart(document.getElementById('devFormatChart'), {
+                type: 'bar',
+                data: {
+                    labels: dfLabels,
+                    datasets: [{
+                        label: 'จำนวนผู้ตอบ',
+                        data: dfData,
+                        backgroundColor: getChartColors(dfLabels.length),
+                        borderColor: getChartColors(dfLabels.length).map(c => c.replace('0.6', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Horizontal bar chart
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'จำนวนผู้ตอบ'
+                            },
+                            ticks: {
+                                precision: 0 // Ensure integer ticks
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Development Duration Chart
+            const ddLabels = Object.keys(processedData.devDurationCounts);
+            const ddData = Object.values(processedData.devDurationCounts);
+            devDurationChart = new Chart(document.getElementById('devDurationChart'), {
+                type: 'pie',
+                data: {
+                    labels: ddLabels,
+                    datasets: [{
+                        data: ddData,
+                        backgroundColor: getChartColors(ddLabels.length),
+                        borderColor: getChartColors(ddLabels.length).map(c => c.replace('0.6', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+
+            // Development Time Chart
+            const dtLabels = Object.keys(processedData.devTimeCounts);
+            const dtData = Object.values(processedData.devTimeCounts);
+            devTimeChart = new Chart(document.getElementById('devTimeChart'), {
+                type: 'bar',
+                data: {
+                    labels: dtLabels,
+                    datasets: [{
+                        label: 'จำนวนผู้ตอบ',
+                        data: dtData,
+                        backgroundColor: getChartColors(dtLabels.length),
+                        borderColor: getChartColors(dtLabels.length).map(c => c.replace('0.6', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'จำนวนผู้ตอบ'
+                            },
+                            ticks: {
+                                precision: 0 // Ensure integer ticks
+                            }
+                        }
+                    }
+                }
+            });
+
+
+            // Development Needs Average Chart (Bar Chart)
+            const dnAvgLabels = Object.keys(processedData.developmentNeedsAvg);
+            const dnAvgData = Object.values(processedData.developmentNeedsAvg);
+            developmentNeedsAvgChart = new Chart(document.getElementById('developmentNeedsAvgChart'), {
+                type: 'bar',
+                data: {
+                    labels: dnAvgLabels,
+                    datasets: [{
+                        label: 'คะแนนเฉลี่ย',
+                        data: dnAvgData,
+                        backgroundColor: getChartColors(dnAvgLabels.length),
+                        borderColor: getChartColors(dnAvgLabels.length).map(c => c.replace('0.6', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Horizontal bar chart
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 5,
+                            title: {
+                                display: true,
+                                text: 'คะแนนเฉลี่ย (1-5)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Show the summary section
+            surveySummarySection.classList.remove('hidden');
+        }
+
+        // Initial load of summary data
+        document.addEventListener('DOMContentLoaded', async () => {
+            const data = await fetchSurveyData();
+            if (data.length > 0) {
+                const processedData = processDataForCharts(data);
+                renderCharts(processedData);
+            }
+        });
+
+        // Form submission logic
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+
+            loadingSpinner.classList.remove('hidden');
+
+            const formData = new FormData(form);
+            const surveyData = {
+                userInfo: {},
+                developmentNeeds: {},
+                formatPreferences: {},
+                feedback: {}
+            };
+
+            // Process form data
+            surveyData.userInfo.name = formData.get('name');
+            surveyData.userInfo.subjectGroup = formData.get('subjectGroup');
+            surveyData.userInfo.experience = formData.get('experience');
+            surveyData.userInfo.teachingLevels = formData.getAll('teachingLevel');
+            
+            surveyData.developmentNeeds = {
+                subjectMatter_knowledge: formData.get('q2_1_1'),
+                subjectMatter_integration: formData.get('q2_1_2'),
+                subjectMatter_curriculum: formData.get('q2_1_3'),
+                subjectMatter_innovation: formData.get('q2_1_4'),
+                subjectMatter_tech_application: formData.get('q2_1_5'),
+                
+                pedagogy_activeLearning: formData.get('q2_2_1'),
+                pedagogy_higherOrderThinking: formData.get('q2_2_2'),
+                pedagogy_classroomManagement: formData.get('q2_2_3'),
+                pedagogy_differentiation: formData.get('q2_2_4'),
+                pedagogy_assessment: formData.get('q2_2_5'),
+
+                digital_tools: formData.get('q2_3_1'),
+                digital_lms: formData.get('q2_3_2'),
+                digital_blended: formData.get('q2_3_3'),
+                digital_ai: formData.get('q2_3_4'),
+                digital_citizenship: formData.get('q2_3_5'),
+
+                studentSupport_psychology: formData.get('q2_4_1'),
+                studentSupport_counseling: formData.get('q2_4_2'),
+                studentSupport_relationships: formData.get('q2_4_3'),
+                studentSupport_screening: formData.get('q2_4_4'),
+                studentSupport_lifeSkills: formData.get('q2_4_5'),
+                
+                professional_plc: formData.get('q2_5_1'),
+                professional_research: formData.get('q2_5_2'),
+                professional_mentoring: formData.get('q2_5_3'),
+                professional_communication: formData.get('q2_5_4'),
+                professional_selfCare: formData.get('q2_5_5')
+            };
+
+            surveyData.formatPreferences.formats = formData.getAll('devFormat');
+            surveyData.formatPreferences.duration = formData.get('devDuration');
+            surveyData.formatPreferences.times = formData.getAll('devTime');
+
+            surveyData.feedback.otherTopics = formData.get('otherTopics') || 'ไม่มี';
+            surveyData.feedback.suggestions = formData.get('suggestions') || 'ไม่มี';
+
+            try {
+                // Submit data via POST
+                const postResponse = await fetch(GOOGLE_APP_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Use 'no-cors' for POST requests
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(surveyData)
+                });
+
+                console.log("Data sent to Google Apps Script.");
+                
+                loadingSpinner.classList.add('hidden');
+                surveyContainer.classList.add('hidden');
+                progressBarContainer.classList.add('hidden');
+                thankYouMessage.classList.remove('hidden');
+
+                // After successful submission, fetch and re-render charts
+                const updatedData = await fetchSurveyData();
+                if (updatedData.length > 0) {
+                    const processedData = processDataForCharts(updatedData);
+                    renderCharts(processedData);
+                }
+
+            } catch (error) {
+                console.error("Error sending data to Google Apps Script: ", error);
+                loadingSpinner.classList.add('hidden');
+                formErrorMsg.textContent = 'เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองอีกครั้ง';
+                formErrorMsg.classList.remove('hidden');
+            }
+        });
+
+        // Event listener for the new "View Summary" button
+        viewSummaryButton.addEventListener('click', () => {
+            thankYouMessage.classList.add('hidden'); // Hide the thank you message
+            surveySummarySection.classList.remove('hidden'); // Show the summary section
+            // Scroll to the summary section for a better user experience
+            surveySummarySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    </script>
+</body>
+</html>
