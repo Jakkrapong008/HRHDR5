@@ -135,7 +135,7 @@
                             <input type="text" id="name" name="name" required class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
-                            <label for="subjectGroup" class="block mb-2 font-medium">กลุ่มสาระการเรียนรู้หลัก <span class="text-red-500">*</span></label>
+                            <label for="subjectGroup" class="block mb-2 font-medium">กลุ่มสาระการเรียนรู้ <span class="text-red-500">*</span></label>
                             <select id="subjectGroup" name="subjectGroup" required class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="" disabled selected>-- โปรดเลือก --</option>
                                 <option value="ภาษาไทย">ภาษาไทย</option>
@@ -161,7 +161,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block mb-2 font-medium">ระดับชั้นที่สอนเป็นหลัก <span class="text-red-500">*</span></label>
+                            <label class="block mb-2 font-medium">ระดับชั้นที่สอน (เลือกได้หลายระดับ) <span class="text-red-500">*</span></label>
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 <div><label class="inline-flex items-center"><input type="checkbox" name="teachingLevel" value="ม.1" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ม.1</span></label></div>
                                 <div><label class="inline-flex items-center"><input type="checkbox" name="teachingLevel" value="ม.2" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ม.2</span></label></div>
@@ -262,6 +262,7 @@
                         <div>
                             <label class="block mb-2 font-medium">ช่วงเวลาที่สะดวก <span class="text-red-500">*</span><br><span class="text-sm text-gray-500">(เลือกได้มากกว่า 1 ข้อ)</span></label>
                             <div class="space-y-2">
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันธรรมดา ในเวลาเรียน" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันธรรมดา ในเวลาเรียน</span></label></div>
                                 <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันธรรมดา หลังเลิกเรียน" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันธรรมดา หลังเลิกเรียน</span></label></div>
                                 <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันเสาร์ (เต็มวัน)" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันเสาร์ (เต็มวัน)</span></label></div>
                                 <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันเสาร์ (ครึ่งวัน)" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันเสาร์ (ครึ่งวัน)</span></label></div>
