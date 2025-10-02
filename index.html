@@ -89,7 +89,7 @@
         .chart-container {
             position: relative;
             margin: auto;
-            height: 400px; /* Default height for most charts */
+            height: 400px; /* Default height */
             width: 100%;
         }
         @media (min-width: 768px) {
@@ -97,7 +97,6 @@
                 width: 70%; /* Adjust for larger screens */
             }
         }
-        /* Removed fixed height for #developmentNeedsAvgChart to allow dynamic sizing */
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
@@ -111,13 +110,8 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 md:p-12">
             
             <!-- Header -->
-               <div class="flex justify-center items-center py-4">
-        <img src="https://img2.pic.in.th/pic/logo-HDR.th.png" alt="[Image of logo-HDR]" class="w-[100px] h-[100px] object-contain rounded-lg shadow-md">
-    </div>
             <div class="text-center mb-10">
                 <h1 class="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400">แบบสำรวจความต้องการพัฒนาศักยภาพครู</h1>
-                <!-- New Subtitle -->
-                <p class="mt-2 text-lg md:text-xl text-gray-700 dark:text-gray-300">กลุ่มงานบุคคล โรงเรียนหางดงรัฐราษฎร์อุปถัมภ์</p>
                 <p class="mt-4 text-gray-600 dark:text-gray-300">
                     ข้อมูลของท่านจะเป็นประโยชน์อย่างยิ่งในการวางแผนพัฒนาบุคลากรครูให้มีประสิทธิภาพสูงสุด
                 </p>
@@ -135,7 +129,7 @@
                             <input type="text" id="name" name="name" required class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
-                            <label for="subjectGroup" class="block mb-2 font-medium">กลุ่มสาระการเรียนรู้ <span class="text-red-500">*</span></label>
+                            <label for="subjectGroup" class="block mb-2 font-medium">กลุ่มสาระการเรียนรู้หลัก <span class="text-red-500">*</span></label>
                             <select id="subjectGroup" name="subjectGroup" required class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="" disabled selected>-- โปรดเลือก --</option>
                                 <option value="ภาษาไทย">ภาษาไทย</option>
@@ -161,7 +155,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block mb-2 font-medium">ระดับชั้นที่สอน (เลือกได้หลายระดับ) <span class="text-red-500">*</span></label>
+                            <label class="block mb-2 font-medium">ระดับชั้นที่สอนเป็นหลัก <span class="text-red-500">*</span></label>
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 <div><label class="inline-flex items-center"><input type="checkbox" name="teachingLevel" value="ม.1" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ม.1</span></label></div>
                                 <div><label class="inline-flex items-center"><input type="checkbox" name="teachingLevel" value="ม.2" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">ม.2</span></label></div>
@@ -262,7 +256,6 @@
                         <div>
                             <label class="block mb-2 font-medium">ช่วงเวลาที่สะดวก <span class="text-red-500">*</span><br><span class="text-sm text-gray-500">(เลือกได้มากกว่า 1 ข้อ)</span></label>
                             <div class="space-y-2">
-                                <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันธรรมดา ในเวลาเรียน" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันธรรมดา ในเวลาเรียน</span></label></div>
                                 <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันธรรมดา หลังเลิกเรียน" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันธรรมดา หลังเลิกเรียน</span></label></div>
                                 <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันเสาร์ (เต็มวัน)" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันเสาร์ (เต็มวัน)</span></label></div>
                                 <div><label class="inline-flex items-center"><input type="checkbox" name="devTime" value="วันเสาร์ (ครึ่งวัน)" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2">วันเสาร์ (ครึ่งวัน)</span></label></div>
@@ -347,15 +340,8 @@
                     <canvas id="devTimeChart"></canvas>
                 </div>
                 <div class="chart-container md:col-span-2">
-                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-300">คะแนนเฉลี่ยความต้องการพัฒนาศักยภาพ (แยกตามหัวข้อย่อย)</h3>
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-300">คะแนนเฉลี่ยความต้องการพัฒนาศักยภาพ (1=น้อยที่สุด, 5=มากที่สุด)</h3>
                     <canvas id="developmentNeedsAvgChart"></canvas>
-                </div>
-                <!-- New section for top 3 topics -->
-                <div id="topTopicsSummary" class="md:col-span-2 mt-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-xl shadow-inner">
-                    <h3 class="text-xl font-semibold text-blue-700 dark:text-blue-300 mb-4">หัวข้อการอบรมที่ได้รับความสนใจสูงสุด 3 อันดับแรก</h3>
-                    <ul id="topTopicsList" class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-200">
-                        <!-- Top topics will be dynamically inserted here -->
-                    </ul>
                 </div>
             </div>
         </div>
@@ -376,43 +362,9 @@
         const formErrorMsg = document.getElementById('formError');
         const surveySummarySection = document.getElementById('surveySummary');
         const progressBarContainer = document.getElementById('progressBarContainer'); 
-        const topTopicsList = document.getElementById('topTopicsList'); // Get the new list element
 
         // Chart instances
         let subjectGroupChart, experienceChart, teachingLevelChart, devFormatChart, devDurationChart, devTimeChart, developmentNeedsAvgChart;
-
-        // Map Likert scale question names to their full text for chart labels
-        const likertQuestionMap = {
-            'DevNeeds_SubjectMatter_Knowledge': 'พัฒนาความรู้ในเนื้อหาวิชาที่สอนให้ทันสมัยและลึกซึ้ง',
-            'DevNeeds_SubjectMatter_Integration': 'บูรณาการเนื้อหาข้ามกลุ่มสาระการเรียนรู้',
-            'DevNeeds_SubjectMatter_Curriculum': 'วิเคราะห์หลักสูตรและออกแบบหน่วยการเรียนรู้ที่สอดคล้อง',
-            'DevNeeds_SubjectMatter_Innovation': 'พัฒนาความรู้เกี่ยวกับนวัตกรรมการศึกษาใหม่ๆ',
-            'DevNeeds_SubjectMatter_TechApplication': 'นำเทคโนโลยีมาประยุกต์ใช้กับเนื้อหาวิชา (TPACK)',
-            
-            'DevNeeds_Pedagogy_ActiveLearning': 'ออกแบบกิจกรรมการเรียนรู้เชิงรุก (Active Learning)',
-            'DevNeeds_Pedagogy_HigherOrderThinking': 'ใช้คำถามกระตุ้นการคิดขั้นสูงของผู้เรียน',
-            'DevNeeds_Pedagogy_ClassroomManagement': 'จัดการชั้นเรียนเชิงบวก (Positive Classroom Management)',
-            'DevNeeds_Pedagogy_Differentiation': 'สอนนักเรียนที่มีความแตกต่างหลากหลาย (Differentiated Instruction)',
-            'DevNeeds_Pedagogy_Assessment': 'วัดและประเมินผลที่สอดคล้องกับสมรรถนะผู้เรียน',
-
-            'DevNeeds_Digital_Tools': 'ใช้เครื่องมือ/แอปฯ ดิจิทัลสร้างสื่อการสอนที่น่าสนใจ',
-            'DevNeeds_Digital_LMS': 'ใช้แพลตฟอร์มการเรียนรู้ (LMS) อย่างมีประสิทธิภาพ',
-            'DevNeeds_Digital_Blended': 'จัดการเรียนการสอนแบบผสมผสาน (Blended Learning)',
-            'DevNeeds_Digital_AI': 'ประยุกต์ใช้ปัญญาประดิษฐ์ (AI) เพื่อการศึกษา',
-            'DevNeeds_Digital_Citizenship': 'สร้างเสริมทักษะพลเมืองดิจิทัล (Digital Citizenship)',
-
-            'DevNeeds_StudentSupport_Psychology': 'ความเข้าใจจิตวิทยาวัยรุ่นและการส่งเสริมสุขภาพจิต',
-            'DevNeeds_StudentSupport_Counseling': 'ทักษะการให้คำปรึกษาเบื้องต้นและการรับฟังอย่างเข้าใจ',
-            'DevNeeds_StudentSupport_Relationships': 'การสร้างความสัมพันธ์เชิงบวกกับนักเรียนและผู้ปกครอง',
-            'DevNeeds_StudentSupport_Screening': 'การคัดกรองและส่งต่อนักเรียนกลุ่มเสี่ยง',
-            'DevNeeds_StudentSupport_LifeSkills': 'การส่งเสริมทักษะชีวิต (Life Skills) และทักษะสังคมอารมณ์ (SEL)',
-            
-            'DevNeeds_Professional_PLC': 'การทำงานร่วมกันแบบชุมชนแห่งการเรียนรู้ (PLC)',
-            'DevNeeds_Professional_Research': 'การทำวิจัยในชั้นเรียนเพื่อพัฒนานวัตกรรม',
-            'DevNeeds_Professional_Mentoring': 'ทักษะการเป็นพี่เลี้ยง (Mentoring) ให้เพื่อนครู',
-            'DevNeeds_Professional_Communication': 'ทักษะการสื่อสารและการนำเสนอผลงานทางวิชาการ',
-            'DevNeeds_Professional_SelfCare': 'การจัดการความเครียดและสร้างสมดุลชีวิตการทำงาน'
-        };
 
         // --- Progress Bar Logic ---
         const progressBar = document.getElementById('progressBar');
@@ -489,6 +441,8 @@
         // Function to fetch data from Google Apps Script
         async function fetchSurveyData() {
             try {
+                // Use a different URL for doGet if your Apps Script deployment creates separate ones.
+                // Otherwise, the same 'exec' URL with GET method should work.
                 const response = await fetch(GOOGLE_APP_SCRIPT_URL, {
                     method: 'GET',
                     mode: 'cors' 
@@ -510,11 +464,14 @@
             const devDurationCounts = {};
             const devTimeCounts = {};
 
-            // For detailed Likert scale averages (individual questions)
-            const developmentNeedsRawScores = {};
-            for (const key in likertQuestionMap) {
-                developmentNeedsRawScores[key] = [];
-            }
+            // For Likert scale averages
+            const developmentNeedsScores = {
+                subjectMatter: [],
+                pedagogy: [],
+                digital: [],
+                studentSupport: [],
+                professional: []
+            };
 
             data.forEach(entry => {
                 // Subject Group
@@ -547,21 +504,47 @@
                     });
                 }
 
-                // Likert Scale Scores (parse to number for each question)
-                for (const key in likertQuestionMap) {
-                    if (entry[key] !== undefined && entry[key] !== null && entry[key] !== '') {
-                        developmentNeedsRawScores[key].push(parseInt(entry[key]));
-                    }
-                }
+                // Likert Scale Scores (parse to number)
+                if (entry.DevNeeds_SubjectMatter_Knowledge) developmentNeedsScores.subjectMatter.push(parseInt(entry.DevNeeds_SubjectMatter_Knowledge));
+                if (entry.DevNeeds_SubjectMatter_Integration) developmentNeedsScores.subjectMatter.push(parseInt(entry.DevNeeds_SubjectMatter_Integration));
+                if (entry.DevNeeds_SubjectMatter_Curriculum) developmentNeedsScores.subjectMatter.push(parseInt(entry.DevNeeds_SubjectMatter_Curriculum));
+                if (entry.DevNeeds_SubjectMatter_Innovation) developmentNeedsScores.subjectMatter.push(parseInt(entry.DevNeeds_SubjectMatter_Innovation));
+                if (entry.DevNeeds_SubjectMatter_TechApplication) developmentNeedsScores.subjectMatter.push(parseInt(entry.DevNeeds_SubjectMatter_TechApplication));
+                
+                if (entry.DevNeeds_Pedagogy_ActiveLearning) developmentNeedsScores.pedagogy.push(parseInt(entry.DevNeeds_Pedagogy_ActiveLearning));
+                if (entry.DevNeeds_Pedagogy_HigherOrderThinking) developmentNeedsScores.pedagogy.push(parseInt(entry.DevNeeds_Pedagogy_HigherOrderThinking));
+                if (entry.DevNeeds_Pedagogy_ClassroomManagement) developmentNeedsScores.pedagogy.push(parseInt(entry.DevNeeds_Pedagogy_ClassroomManagement));
+                if (entry.DevNeeds_Pedagogy_Differentiation) developmentNeedsScores.pedagogy.push(parseInt(entry.DevNeeds_Pedagogy_Differentiation));
+                if (entry.DevNeeds_Pedagogy_Assessment) developmentNeedsScores.pedagogy.push(parseInt(entry.DevNeeds_Pedagogy_Assessment));
+
+                if (entry.DevNeeds_Digital_Tools) developmentNeedsScores.digital.push(parseInt(entry.DevNeeds_Digital_Tools));
+                if (entry.DevNeeds_Digital_LMS) developmentNeedsScores.digital.push(parseInt(entry.DevNeeds_Digital_LMS));
+                if (entry.DevNeeds_Digital_Blended) developmentNeedsScores.digital.push(parseInt(entry.DevNeeds_Digital_Blended));
+                if (entry.DevNeeds_Digital_AI) developmentNeedsScores.digital.push(parseInt(entry.DevNeeds_Digital_AI));
+                if (entry.DevNeeds_Digital_Citizenship) developmentNeedsScores.digital.push(parseInt(entry.DevNeeds_Digital_Citizenship));
+
+                if (entry.DevNeeds_StudentSupport_Psychology) developmentNeedsScores.studentSupport.push(parseInt(entry.DevNeeds_StudentSupport_Psychology));
+                if (entry.DevNeeds_StudentSupport_Counseling) developmentNeedsScores.studentSupport.push(parseInt(entry.DevNeeds_StudentSupport_Counseling));
+                if (entry.DevNeeds_StudentSupport_Relationships) developmentNeedsScores.studentSupport.push(parseInt(entry.DevNeeds_StudentSupport_Relationships));
+                if (entry.DevNeeds_StudentSupport_Screening) developmentNeedsScores.studentSupport.push(parseInt(entry.DevNeeds_StudentSupport_Screening));
+                if (entry.DevNeeds_StudentSupport_LifeSkills) developmentNeedsScores.studentSupport.push(parseInt(entry.DevNeeds_StudentSupport_LifeSkills));
+                
+                if (entry.DevNeeds_Professional_PLC) developmentNeedsScores.professional.push(parseInt(entry.DevNeeds_Professional_PLC));
+                if (entry.DevNeeds_Professional_Research) developmentNeedsScores.professional.push(parseInt(entry.DevNeeds_Professional_Research));
+                if (entry.DevNeeds_Professional_Mentoring) developmentNeedsScores.professional.push(parseInt(entry.DevNeeds_Professional_Mentoring));
+                if (entry.DevNeeds_Professional_Communication) developmentNeedsScores.professional.push(parseInt(entry.DevNeeds_Professional_Communication));
+                if (entry.DevNeeds_Professional_SelfCare) developmentNeedsScores.professional.push(parseInt(entry.DevNeeds_Professional_SelfCare));
             });
 
-            // Calculate averages for each individual Likert question
-            const developmentNeedsDetailedAverages = {};
+            // Calculate averages for Likert scales
             const calculateAverage = (arr) => arr.length ? (arr.reduce((sum, val) => sum + val, 0) / arr.length).toFixed(2) : 0;
-
-            for (const key in developmentNeedsRawScores) {
-                developmentNeedsDetailedAverages[likertQuestionMap[key]] = calculateAverage(developmentNeedsRawScores[key]);
-            }
+            const developmentNeedsAvg = {
+                'ด้านความรู้และเนื้อหาวิชาการ': calculateAverage(developmentNeedsScores.subjectMatter),
+                'ด้านทักษะการจัดการเรียนรู้': calculateAverage(developmentNeedsScores.pedagogy),
+                'ด้านการใช้เทคโนโลยีดิจิทัล': calculateAverage(developmentNeedsScores.digital),
+                'ด้านการดูแลและส่งเสริมนักเรียน': calculateAverage(developmentNeedsScores.studentSupport),
+                'ด้านการพัฒนาตนเองและวิชาชีพ': calculateAverage(developmentNeedsScores.professional)
+            };
 
             return {
                 subjectGroupCounts,
@@ -570,7 +553,7 @@
                 devFormatCounts,
                 devDurationCounts,
                 devTimeCounts,
-                developmentNeedsDetailedAverages // Changed to detailed averages
+                developmentNeedsAvg
             };
         }
 
@@ -598,11 +581,6 @@
                     'rgba(20, 184, 166, 0.6)', // Teal
                     'rgba(253, 224, 71, 0.6)', // Light Yellow
                     'rgba(248, 113, 113, 0.6)', // Light Red
-                    'rgba(147, 51, 234, 0.6)', // Purple
-                    'rgba(249, 115, 22, 0.6)', // Orange
-                    'rgba(6, 182, 212, 0.6)',  // Cyan
-                    'rgba(217, 70, 239, 0.6)', // Fuchsia
-                    'rgba(100, 116, 139, 0.6)',// Slate
                 ];
                 // Repeat or truncate colors if needed
                 return Array.from({ length: numColors }, (_, i) => colors[i % colors.length]);
@@ -812,36 +790,25 @@
             });
 
 
-            // Development Needs Detailed Average Chart (Horizontal Bar Chart)
-            const dnDetailedLabels = Object.keys(processedData.developmentNeedsDetailedAverages);
-            const dnDetailedData = Object.values(processedData.developmentNeedsDetailedAverages);
-
-            // Calculate dynamic height for this specific chart
-            // Each bar needs ~35px height, plus some padding for top/bottom and labels
-            const dynamicChartHeight = (dnDetailedLabels.length * 35) + 200; // 35px per bar + 200px for padding/axes/titles
-
-            // Set the height of the canvas element's parent container
-            const developmentNeedsAvgChartContainer = document.getElementById('developmentNeedsAvgChart').closest('.chart-container');
-            if (developmentNeedsAvgChartContainer) {
-                developmentNeedsAvgChartContainer.style.height = `${dynamicChartHeight}px`;
-            }
-
+            // Development Needs Average Chart (Bar Chart)
+            const dnAvgLabels = Object.keys(processedData.developmentNeedsAvg);
+            const dnAvgData = Object.values(processedData.developmentNeedsAvg);
             developmentNeedsAvgChart = new Chart(document.getElementById('developmentNeedsAvgChart'), {
                 type: 'bar',
                 data: {
-                    labels: dnDetailedLabels,
+                    labels: dnAvgLabels,
                     datasets: [{
                         label: 'คะแนนเฉลี่ย',
-                        data: dnDetailedData,
-                        backgroundColor: getChartColors(dnDetailedLabels.length),
-                        borderColor: getChartColors(dnDetailedLabels.length).map(c => c.replace('0.6', '1')),
+                        data: dnAvgData,
+                        backgroundColor: getChartColors(dnAvgLabels.length),
+                        borderColor: getChartColors(dnAvgLabels.length).map(c => c.replace('0.6', '1')),
                         borderWidth: 1
                     }]
                 },
                 options: {
                     indexAxis: 'y', // Horizontal bar chart
                     responsive: true,
-                    maintainAspectRatio: false, // Important for dynamic height
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: false
@@ -859,19 +826,6 @@
                     }
                 }
             });
-
-            // Populate top 3 topics
-            const sortedTopics = Object.entries(processedData.developmentNeedsDetailedAverages)
-                .sort(([, scoreA], [, scoreB]) => parseFloat(scoreB) - parseFloat(scoreA)); // Sort descending by score
-
-            topTopicsList.innerHTML = ''; // Clear previous list
-            for (let i = 0; i < Math.min(3, sortedTopics.length); i++) {
-                const [topic, score] = sortedTopics[i];
-                const listItem = document.createElement('li');
-                listItem.textContent = `${i + 1}. ${topic} (คะแนนเฉลี่ย: ${score})`;
-                topTopicsList.appendChild(listItem);
-            }
-
 
             // Show the summary section
             surveySummarySection.classList.remove('hidden');
@@ -910,27 +864,37 @@
             surveyData.userInfo.experience = formData.get('experience');
             surveyData.userInfo.teachingLevels = formData.getAll('teachingLevel');
             
-            // Collect all Likert scale values by their 'name' attribute directly
-            for (const key in likertQuestionMap) {
-                // The form element names are like q2_1_1, q2_1_2, etc.
-                // The likertQuestionMap keys are like DevNeeds_SubjectMatter_Knowledge
-                // We need to map them back. Let's create a reverse map or fix the key logic.
-                let formFieldName = '';
-                // Dynamically construct the form field name based on the key structure
-                if (key.startsWith('DevNeeds_SubjectMatter')) {
-                    formFieldName = 'q2_1_' + key.charAt(key.length - 1); // e.g., DevNeeds_SubjectMatter_Knowledge -> q2_1_1
-                } else if (key.startsWith('DevNeeds_Pedagogy')) {
-                    formFieldName = 'q2_2_' + key.charAt(key.length - 1);
-                } else if (key.startsWith('DevNeeds_Digital')) {
-                    formFieldName = 'q2_3_' + key.charAt(key.length - 1);
-                } else if (key.startsWith('DevNeeds_StudentSupport')) {
-                    formFieldName = 'q2_4_' + key.charAt(key.length - 1);
-                } else if (key.startsWith('DevNeeds_Professional')) {
-                    formFieldName = 'q2_5_' + key.charAt(key.length - 1);
-                }
+            surveyData.developmentNeeds = {
+                subjectMatter_knowledge: formData.get('q2_1_1'),
+                subjectMatter_integration: formData.get('q2_1_2'),
+                subjectMatter_curriculum: formData.get('q2_1_3'),
+                subjectMatter_innovation: formData.get('q2_1_4'),
+                subjectMatter_tech_application: formData.get('q2_1_5'),
+                
+                pedagogy_activeLearning: formData.get('q2_2_1'),
+                pedagogy_higherOrderThinking: formData.get('q2_2_2'),
+                pedagogy_classroomManagement: formData.get('q2_2_3'),
+                pedagogy_differentiation: formData.get('q2_2_4'),
+                pedagogy_assessment: formData.get('q2_2_5'),
 
-                surveyData.developmentNeeds[key] = formData.get(formFieldName);
-            }
+                digital_tools: formData.get('q2_3_1'),
+                digital_lms: formData.get('q2_3_2'),
+                digital_blended: formData.get('q2_3_3'),
+                digital_ai: formData.get('q2_3_4'),
+                digital_citizenship: formData.get('q2_3_5'),
+
+                studentSupport_psychology: formData.get('q2_4_1'),
+                studentSupport_counseling: formData.get('q2_4_2'),
+                studentSupport_relationships: formData.get('q2_4_3'),
+                studentSupport_screening: formData.get('q2_4_4'),
+                studentSupport_lifeSkills: formData.get('q2_4_5'),
+                
+                professional_plc: formData.get('q2_5_1'),
+                professional_research: formData.get('q2_5_2'),
+                professional_mentoring: formData.get('q2_5_3'),
+                professional_communication: formData.get('q2_5_4'),
+                professional_selfCare: formData.get('q2_5_5')
+            };
 
             surveyData.formatPreferences.formats = formData.getAll('devFormat');
             surveyData.formatPreferences.duration = formData.get('devDuration');
